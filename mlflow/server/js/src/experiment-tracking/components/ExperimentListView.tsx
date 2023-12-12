@@ -34,8 +34,7 @@ type Props = {
   designSystemThemeApi: {
     theme?: any;
   };
-  // @ts-expect-error TS(2749): 'Experiment' refers to a value, but is being used ... Remove this comment to see the full error message
-  experiments: Experiment[];
+  experiments: any[];
   navigate: NavigateFunction;
 };
 
@@ -72,7 +71,7 @@ export class ExperimentListView extends Component<Props, State> {
     const lowerCasedSearchInput = searchInput.toLowerCase();
     return lowerCasedSearchInput === ''
       ? experiments
-      : experiments.filter(({ name }) => name.toLowerCase().includes(lowerCasedSearchInput));
+      : experiments.filter(({ name }: any) => name.toLowerCase().includes(lowerCasedSearchInput));
   };
 
   handleSearchInputChange = (event: any) => {

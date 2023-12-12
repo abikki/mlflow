@@ -9,12 +9,12 @@ import {
   Typography,
 } from '@databricks/design-system';
 import React, { Component } from 'react';
-import { Experiment } from '../sdk/MlflowMessages';
 
+import { Experiment } from '../sdk/MlflowMessages';
 import { css } from '@emotion/react';
 
 type Props = {
-  experiments: Experiment[];
+  experiments: any[];
   project: string;
   handleProjectChange: any;
 };
