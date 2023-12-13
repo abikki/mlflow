@@ -47,7 +47,7 @@ export class ProjectListView extends Component<Props, State> {
         const projectTag = experiment.tags.find((tag:any) => tag.key === "project");
         return projectTag.value;
       });
-      return ['All','Default', ...projects];
+      return ['All','Default', ...new Set(projects)];
   };
   
   render() {
