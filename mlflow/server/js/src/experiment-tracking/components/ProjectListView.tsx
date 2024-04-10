@@ -9,12 +9,11 @@ import {
   Typography,
 } from '@databricks/design-system';
 import React, { Component } from 'react';
-import { Experiment } from '../sdk/MlflowMessages';
-
+import { ExperimentEntity } from '../types';
 import { css } from '@emotion/react';
 
 type Props = {
-  experiments: Experiment[];
+  experiments: ExperimentEntity[];
   project: string;
   handleProjectChange: any;
 };
@@ -45,7 +44,7 @@ export class ProjectListView extends Component<Props, State> {
       })
       .map(experiment => {
         const projectTag = experiment.tags.find((tag:any) => tag.key === "project");
-        return projectTag.value;
+        return projectTag ?projectTag.value:null;
       });
       return ['All','Default', ...projects];
   };
