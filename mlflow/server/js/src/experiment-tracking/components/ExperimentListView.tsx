@@ -28,6 +28,7 @@ import { RenameExperimentModal } from './modals/RenameExperimentModal';
 import { IconButton } from '../../common/components/IconButton';
 import { withRouterNext } from '../../common/utils/withRouterNext';
 import { ExperimentEntity } from '../types';
+import ProjectListView, { filterExperimentsByProject } from './ProjectListView';
 
 type Props = {
   activeExperimentIds: string[];
@@ -44,6 +45,7 @@ export class ExperimentListView extends Component<Props, State> {
     checkedKeys: this.props.activeExperimentIds,
     hidden: false,
     searchInput: '',
+    project:'All',
     showCreateExperimentModal: false,
     showDeleteExperimentModal: false,
     showRenameExperimentModal: false,
@@ -63,16 +65,22 @@ export class ExperimentListView extends Component<Props, State> {
   };
 
   filterExperiments = (searchInput: any) => {
-    const { experiments } = this.props;
+    const experiments = filterExperimentsByProject(this.props.experiments, this.state.project)
     const lowerCasedSearchInput = searchInput.toLowerCase();
     return lowerCasedSearchInput === ''
-      ? this.props.experiments
+      ? experiments
       : experiments.filter(({ name }) => name.toLowerCase().includes(lowerCasedSearchInput));
   };
 
   handleSearchInputChange = (event: any) => {
     this.setState({
       searchInput: event.target.value,
+    });
+  };
+
+  handleProjectChange = (value: any) => {
+    this.setState({
+      project: value,
     });
   };
 
@@ -257,6 +265,8 @@ export class ExperimentListView extends Component<Props, State> {
           experimentId={this.state.selectedExperimentId}
           experimentName={this.state.selectedExperimentName}
         />
+        <div>
+          <ProjectListView experiments={this.props.experiments} project={this.state.project} handleProjectChange={this.handleProjectChange}/>
         <div css={classNames.experimentTitleContainer}>
           <Typography.Title level={2} style={{ margin: 0 }}>
             Experiments
@@ -276,6 +286,7 @@ export class ExperimentListView extends Component<Props, State> {
             />
           </div>
         </div>
+	      </div>
         <Input
           placeholder="Search Experiments"
           aria-label="search experiments"
