@@ -69,7 +69,7 @@ export class ExperimentListView extends Component<Props, State> {
     const lowerCasedSearchInput = searchInput.toLowerCase();
     return lowerCasedSearchInput === ''
       ? experiments
-      : experiments.filter(({ name }) => name.toLowerCase().includes(lowerCasedSearchInput));
+      : experiments.filter(({ name }: any) => name.toLowerCase().includes(lowerCasedSearchInput));
   };
 
   handleSearchInputChange = (event: any) => {
