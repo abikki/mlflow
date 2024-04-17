@@ -45,7 +45,7 @@ export class ExperimentListView extends Component<Props, State> {
     checkedKeys: this.props.activeExperimentIds,
     hidden: false,
     searchInput: '',
-    project:'All',
+    project: localStorage.getItem('mlflow-exp-project') || 'All',
     showCreateExperimentModal: false,
     showDeleteExperimentModal: false,
     showRenameExperimentModal: false,
@@ -79,6 +79,7 @@ export class ExperimentListView extends Component<Props, State> {
   };
 
   handleProjectChange = (value: any) => {
+    localStorage.setItem('mlflow-exp-project', value);
     this.setState({
       project: value,
     });
