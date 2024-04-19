@@ -80,9 +80,12 @@ export class ExperimentListView extends Component<Props, State> {
 
   handleProjectChange = (value: any) => {
     localStorage.setItem('mlflow-exp-project', value);
-    this.setState({
-      project: value,
-    });
+    if(value !== this.state.project){
+      this.setState({
+        project: value,
+        checkedKeys: [],
+      });
+    }
   };
 
   updateSelectedExperiment = (experimentId: any, experimentName: any) => {
