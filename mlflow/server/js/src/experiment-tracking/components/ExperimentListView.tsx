@@ -173,7 +173,7 @@ export class ExperimentListView extends Component<Props, State> {
     // Use the parents props to index.
     const item = parent.props.data[index];
     const { activeExperimentIds } = this.props;
-    const isActive = activeExperimentIds.includes(item.experiment_id);
+    const isActive = activeExperimentIds.includes(item.experiment_id) || this.state.checkedKeys.includes(item.experiment_id);
     const dataTestId = isActive ? 'active-experiment-list-item' : 'experiment-list-item';
     // Clicking the link removes all checks and marks other experiments
     // as not active.
