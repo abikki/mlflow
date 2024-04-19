@@ -40,9 +40,9 @@ type State = any;
 
 export class ExperimentListView extends Component<Props, State> {
   list: any;
-
+  selectedExperiments = localStorage.getItem('selected-experiments') || []
   state = {
-    checkedKeys: localStorage.getItem('selected-experiments') || this.props.activeExperimentIds,
+    checkedKeys: this.selectedExperiments ? this.selectedExperiments : this.props.activeExperimentIds,
     hidden: false,
     searchInput: '',
     project: localStorage.getItem('mlflow-exp-project') || 'All',
