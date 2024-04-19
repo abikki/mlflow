@@ -42,7 +42,7 @@ export class ExperimentListView extends Component<Props, State> {
   list: any;
 
   state = {
-    checkedKeys: this.props.activeExperimentIds,
+    checkedKeys: localStorage.getItem('selected-experiments') || this.props.activeExperimentIds,
     hidden: false,
     searchInput: '',
     project: localStorage.getItem('mlflow-exp-project') || 'All',
@@ -134,6 +134,9 @@ export class ExperimentListView extends Component<Props, State> {
     this.updateSelectedExperiment('0', '');
   };
 
+  persistSelectedExperiemnts = (selected: any) => {
+    localStorage.setItem('selected-experiments', selected);
+  }
   // Add a key if it does not exist, remove it if it does
   // Always keep at least one experiment checked if it is only the active one.
   handleCheck = (isChecked: any, key: any) => {
@@ -145,6 +148,7 @@ export class ExperimentListView extends Component<Props, State> {
       if (isChecked === false && props.activeExperimentIds.length !== 1) {
         checkedKeys = props.activeExperimentIds.filter((i: any) => i !== key);
       }
+      this.persistSelectedExperiemnts(checkedKeys);
       return { checkedKeys: checkedKeys };
     }, this.pushExperimentRoute);
   };
