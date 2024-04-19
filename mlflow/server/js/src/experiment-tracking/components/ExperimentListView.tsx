@@ -6,6 +6,7 @@
  */
 
 import React, { Component } from 'react';
+
 import { css, Theme } from '@emotion/react';
 import {
   Checkbox,
@@ -57,12 +58,15 @@ export class ExperimentListView extends Component<Props, State> {
     this.list = ref;
   };
 
-  componentDidUpdate = () => {
-    // Ensure the filter is applied
+  componentDidUpdate = (prevProps: Props) => {
     if (this.list) {
       this.list.forceUpdateGrid();
     }
-  };
+    const exps = JSON.parse(localStorage.getItem('selected-experiments') || '[]');
+    if (prevProps.activeExperimentIds.length !== exps.length) {
+      this.pushExperimentRoute();
+    }
+  }
 
   filterExperiments = (searchInput: any) => {
     const experiments = filterExperimentsByProject(this.props.experiments, this.state.project)
