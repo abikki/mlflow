@@ -6,6 +6,7 @@
  */
 
 import React, { Component } from 'react';
+
 import { css, Theme } from '@emotion/react';
 import {
   Checkbox,
@@ -40,9 +41,9 @@ type State = any;
 
 export class ExperimentListView extends Component<Props, State> {
   list: any;
-
+  selectedExperiments: string[] = JSON.parse(localStorage.getItem('selected-experiments') || '[]');
   state = {
-    checkedKeys: this.props.activeExperimentIds,
+    checkedKeys: JSON.parse(localStorage.getItem('selected-experiments') || '[]'),
     hidden: false,
     searchInput: '',
     project: localStorage.getItem('mlflow-exp-project') || 'All',
@@ -57,12 +58,15 @@ export class ExperimentListView extends Component<Props, State> {
     this.list = ref;
   };
 
-  componentDidUpdate = () => {
-    // Ensure the filter is applied
+  componentDidUpdate = (prevProps: Props) => {
     if (this.list) {
       this.list.forceUpdateGrid();
     }
-  };
+    const exps = JSON.parse(localStorage.getItem('selected-experiments') || '[]');
+    if (prevProps.activeExperimentIds.length !== exps.length) {
+      this.pushExperimentRoute();
+    }
+  }
 
   filterExperiments = (searchInput: any) => {
     const experiments = filterExperimentsByProject(this.props.experiments, this.state.project)
@@ -79,10 +83,11 @@ export class ExperimentListView extends Component<Props, State> {
   };
 
   handleProjectChange = (value: any) => {
+    const experiments = filterExperimentsByProject(this.props.experiments, value)
     localStorage.setItem('mlflow-exp-project', value);
-    this.setState({
-      project: value,
-    });
+    this.setState((prevState: any, props: any) => {
+      return {project: value, checkedKeys: experiments.length ?[experiments[0].experiment_id] : [] };
+    }, this.pushExperimentRoute);
   };
 
   updateSelectedExperiment = (experimentId: any, experimentName: any) => {
@@ -134,6 +139,9 @@ export class ExperimentListView extends Component<Props, State> {
     this.updateSelectedExperiment('0', '');
   };
 
+  persistSelectedExperiemnts = (selected: any) => {
+    localStorage.setItem('selected-experiments', JSON.stringify(selected));
+  }
   // Add a key if it does not exist, remove it if it does
   // Always keep at least one experiment checked if it is only the active one.
   handleCheck = (isChecked: any, key: any) => {
@@ -145,11 +153,13 @@ export class ExperimentListView extends Component<Props, State> {
       if (isChecked === false && props.activeExperimentIds.length !== 1) {
         checkedKeys = props.activeExperimentIds.filter((i: any) => i !== key);
       }
+      this.persistSelectedExperiemnts(checkedKeys);
       return { checkedKeys: checkedKeys };
     }, this.pushExperimentRoute);
   };
 
   pushExperimentRoute = () => {
+    this.persistSelectedExperiemnts(this.state.checkedKeys);
     if (this.state.checkedKeys.length > 0) {
       const route =
         this.state.checkedKeys.length === 1
@@ -167,7 +177,7 @@ export class ExperimentListView extends Component<Props, State> {
     // Use the parents props to index.
     const item = parent.props.data[index];
     const { activeExperimentIds } = this.props;
-    const isActive = activeExperimentIds.includes(item.experiment_id);
+    const isActive = activeExperimentIds.includes(item.experiment_id) || this.state.checkedKeys.includes(item.experiment_id);
     const dataTestId = isActive ? 'active-experiment-list-item' : 'experiment-list-item';
     // Clicking the link removes all checks and marks other experiments
     // as not active.

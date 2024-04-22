@@ -9,6 +9,7 @@ import {
   Typography,
 } from '@databricks/design-system';
 import React, { Component } from 'react';
+
 import { ExperimentEntity } from '../types';
 import { css } from '@emotion/react';
 
@@ -44,9 +45,9 @@ export class ProjectListView extends Component<Props, State> {
       })
       .map(experiment => {
         const projectTag = experiment.tags.find((tag:any) => tag.key === "project");
-        return projectTag ?projectTag.value:null;
+        return projectTag ? projectTag.value : null;
       });
-      return ['All','Default', ...projects];
+      return ['All','Default', ...new Set(projects)];
   };
   
   render() {
