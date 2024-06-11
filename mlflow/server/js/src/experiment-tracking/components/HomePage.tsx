@@ -32,7 +32,7 @@ const getFirstActiveExperiment = (experiments: ExperimentEntity[]) => {
     filteredExperiments = filterExperimentsByProject(experiments, selectedProject);
   }
   const sorted = [...filteredExperiments].sort(Utils.compareExperiments);
-  return sorted.find(({ lifecycle_stage }) => lifecycle_stage === 'active' );
+  return sorted.find(({ lifecycleStage }) => lifecycleStage === 'active' );
 };
 
 const HomePage = () => {
