@@ -56,6 +56,7 @@ export interface RunViewMetricChartProps {
    * Reference to a overarching refresh manager (entity that will trigger refresh of subscribed charts)
    */
   chartRefreshManager: ChartRefreshManager;
+  maxResults: number;
 }
 
 /**
@@ -71,6 +72,7 @@ export const RunViewMetricChart = ({
   onMoveUp,
   onMoveDown,
   chartRefreshManager,
+  maxResults,
 }: RunViewMetricChartProps) => {
   const { dragHandleRef, dragPreviewRef, dropTargetRef, isDragging, isOver } = useDragAndDropElement({
     dragGroupKey,
@@ -96,7 +98,7 @@ export const RunViewMetricChart = ({
     metricKeys,
     enabled: isInViewport,
     range: stepRange,
-    maxResults: 320,
+    maxResults: maxResults,
   });
 
   const { metricsHistory, error } = resultsByRunUuid[runInfo.runUuid]?.[metricKey] || {};

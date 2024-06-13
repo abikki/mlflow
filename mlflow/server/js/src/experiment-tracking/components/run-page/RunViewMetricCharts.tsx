@@ -7,6 +7,13 @@ import {
   Spacer,
   Spinner,
   useDesignSystemTheme,
+  DialogCombobox,
+  DialogComboboxContent,
+  DialogComboboxOptionList,
+  DialogComboboxOptionListCheckboxItem,
+  DialogComboboxOptionListSelectItem,
+  DialogComboboxOptionListSearch,
+  DialogComboboxTrigger,
 } from '@databricks/design-system';
 import { compact, mapValues, values } from 'lodash';
 import { useMemo, useState } from 'react';
@@ -56,12 +63,14 @@ const RunViewMetricChartsSection = ({
   runInfo,
   chartRefreshManager,
   onReorderChart,
+  maxResults,
 }: {
   metricKeys: string[];
   search: string;
   runInfo: RunInfoEntity;
   onReorderChart: (sourceChartKey: string, targetChartKey: string) => void;
   chartRefreshManager: ChartRefreshManager;
+  maxResults: number;
 }) => {
   const { theme } = useDesignSystemTheme();
 
@@ -100,6 +109,7 @@ const RunViewMetricChartsSection = ({
           onMoveDown={() => moveChartDown(metricKey)}
           onMoveUp={() => moveChartUp(metricKey)}
           chartRefreshManager={chartRefreshManager}
+          maxResults={maxResults}
         />
       ))}
     </div>
@@ -136,8 +146,10 @@ export const RunViewMetricCharts = ({
   });
 
   const [search, setSearch] = useState('');
+  const [maxSteps, setMaxSteps] = useState('320');
   const { formatMessage } = useIntl();
 
+  const maxResultsValues = ['5', '10', '25', '50', '100', '200', '320'];
   const { orderedMetricKeys, onReorderChart } = useOrderedCharts(metricKeys, 'RunView' + mode, runInfo.runUuid);
 
   const noMetricsRecorded = !metricKeys.length;
@@ -172,6 +184,35 @@ export const RunViewMetricCharts = ({
                   description: 'Run page > Charts tab > Filter metric charts input > placeholder',
                 })}
               />
+              <DialogCombobox
+                label={formatMessage({
+                  defaultMessage: 'Max Steps',
+                  description: 'Render chats for maximum steps',
+                })}
+                value={[maxSteps]}
+              >
+                <DialogComboboxTrigger allowClear={false} data-testid="max-steps" />
+                <DialogComboboxContent>
+                  <DialogComboboxOptionList>
+                    {maxResultsValues.map((val) => {
+                      return (
+                        <DialogComboboxOptionListSelectItem
+                          checked={maxSteps === val}
+                          key={val}
+                          data-testid={'max-steps-' + val}
+                          value={val}
+                          onChange={() => {
+                            setMaxSteps(val);
+                            chartRefreshManager.refreshAllCharts();
+                          }}
+                        >
+                          {val}
+                        </DialogComboboxOptionListSelectItem>
+                      );
+                    })}
+                  </DialogComboboxOptionList>
+                </DialogComboboxContent>
+              </DialogCombobox>
               <Button
                 componentId="codegen_mlflow_app_src_experiment-tracking_components_run-page_runviewmetriccharts.tsx_176"
                 icon={
@@ -208,6 +249,7 @@ export const RunViewMetricCharts = ({
                 search={search}
                 onReorderChart={onReorderChart}
                 chartRefreshManager={chartRefreshManager}
+                maxResults={parseInt(maxSteps)}
               />
             )}
           </RunsChartsTooltipWrapper>
