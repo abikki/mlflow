@@ -80,17 +80,16 @@ const RunViewMetricChartsSection = ({
     filteredMetricKeys,
     onReorderChart,
   );
-
   const gridSetup = useMemo(
     () => ({
       ...getGridColumnSetup({
-        maxColumns: 3,
+        maxColumns: maxResults > 100 ? 1 : 3,
         gap: theme.spacing.lg,
         additionalBreakpoints: [{ breakpointWidth: 3 * 720, minColumnWidthForBreakpoint: 720 }],
       }),
       overflow: 'hidden',
     }),
-    [theme],
+    [theme, maxResults],
   );
 
   return filteredMetricKeys.length ? (
@@ -146,7 +145,7 @@ export const RunViewMetricCharts = ({
   });
 
   const [search, setSearch] = useState('');
-  const [maxSteps, setMaxSteps] = useState('320');
+  const [maxSteps, setMaxSteps] = useState(localStorage.getItem('mlflow-run-chart-default-steps') || '50');
   const { formatMessage } = useIntl();
 
   const maxResultsValues = ['5', '10', '25', '50', '100', '200', '320'];
@@ -204,6 +203,7 @@ export const RunViewMetricCharts = ({
                           onChange={() => {
                             setMaxSteps(val);
                             chartRefreshManager.refreshAllCharts();
+                            localStorage.setItem('mlflow-run-chart-default-steps', val);
                           }}
                         >
                           {val}
