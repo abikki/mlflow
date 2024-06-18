@@ -57,6 +57,7 @@ export interface RunViewMetricChartProps {
    */
   chartRefreshManager: ChartRefreshManager;
   maxResults: number;
+  showPoint: boolean;
 }
 
 /**
@@ -73,6 +74,7 @@ export const RunViewMetricChart = ({
   onMoveDown,
   chartRefreshManager,
   maxResults,
+  showPoint
 }: RunViewMetricChartProps) => {
   const { dragHandleRef, dragPreviewRef, dropTargetRef, isDragging, isOver } = useDragAndDropElement({
     dragGroupKey,
@@ -198,6 +200,7 @@ export const RunViewMetricChart = ({
         // cases the plotly will use last known range.
         xRange={xRange}
         yRange={yRange.current}
+        showPoint={showPoint}
       />
     );
   };

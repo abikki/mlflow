@@ -14,6 +14,7 @@ import {
   DialogComboboxOptionListSelectItem,
   DialogComboboxOptionListSearch,
   DialogComboboxTrigger,
+  Switch,
 } from '@databricks/design-system';
 import { compact, mapValues, values } from 'lodash';
 import { useMemo, useState } from 'react';
@@ -64,6 +65,7 @@ const RunViewMetricChartsSection = ({
   chartRefreshManager,
   onReorderChart,
   maxResults,
+  showPoint
 }: {
   metricKeys: string[];
   search: string;
@@ -71,6 +73,7 @@ const RunViewMetricChartsSection = ({
   onReorderChart: (sourceChartKey: string, targetChartKey: string) => void;
   chartRefreshManager: ChartRefreshManager;
   maxResults: number;
+  showPoint: boolean;
 }) => {
   const { theme } = useDesignSystemTheme();
 
@@ -109,6 +112,7 @@ const RunViewMetricChartsSection = ({
           onMoveUp={() => moveChartUp(metricKey)}
           chartRefreshManager={chartRefreshManager}
           maxResults={maxResults}
+          showPoint={showPoint}
         />
       ))}
     </div>
@@ -146,9 +150,10 @@ export const RunViewMetricCharts = ({
 
   const [search, setSearch] = useState('');
   const [maxSteps, setMaxSteps] = useState(localStorage.getItem('mlflow-run-chart-default-steps') || '50');
+  const [showPoint, setShowPoint] = useState(true);
   const { formatMessage } = useIntl();
 
-  const maxResultsValues = ['5', '10', '25', '50', '100', '200', '320'];
+  const maxSamples = ['320', "500", "1000", "25000"];
   const { orderedMetricKeys, onReorderChart } = useOrderedCharts(metricKeys, 'RunView' + mode, runInfo.runUuid);
 
   const noMetricsRecorded = !metricKeys.length;
@@ -185,34 +190,48 @@ export const RunViewMetricCharts = ({
               />
               <DialogCombobox
                 label={formatMessage({
-                  defaultMessage: 'Max Steps',
-                  description: 'Render chats for maximum steps',
+                  defaultMessage: 'Samples',
+                  description: 'Number of Samples to render',
                 })}
                 value={[maxSteps]}
               >
-                <DialogComboboxTrigger allowClear={false} data-testid="max-steps" />
+                <DialogComboboxTrigger allowClear={false} data-testid="max-samples" />
                 <DialogComboboxContent>
                   <DialogComboboxOptionList>
-                    {maxResultsValues.map((val) => {
+                    {maxSamples.map((sample) => {
                       return (
                         <DialogComboboxOptionListSelectItem
-                          checked={maxSteps === val}
-                          key={val}
-                          data-testid={'max-steps-' + val}
-                          value={val}
+                          checked={maxSteps === sample}
+                          key={sample}
+                          data-testid={'max-samples-' + sample}
+                          value={sample}
                           onChange={() => {
-                            setMaxSteps(val);
+                            setMaxSteps(sample);
                             chartRefreshManager.refreshAllCharts();
-                            localStorage.setItem('mlflow-run-chart-default-steps', val);
+                            localStorage.setItem('mlflow-run-chart-default-samples', sample);
                           }}
                         >
-                          {val}
+                          {sample}
                         </DialogComboboxOptionListSelectItem>
                       );
                     })}
                   </DialogComboboxOptionList>
                 </DialogComboboxContent>
               </DialogCombobox>
+              <div css={{ display: 'flex', gap: theme.spacing.sm, alignItems: "center" }}>
+                <div>
+                  <FormattedMessage
+                    defaultMessage="Points"
+                    // eslint-disable-next-line max-len
+                    description="Label for the toggle button to toggle to show points or not for the metric experiment run"
+                  />
+                </div>
+                <Switch
+                  data-testid="show-point-toggle"
+                  defaultChecked={showPoint}
+                  onChange={() => setShowPoint(!showPoint)}
+                />
+              </div>
               <Button
                 componentId="codegen_mlflow_app_src_experiment-tracking_components_run-page_runviewmetriccharts.tsx_176"
                 icon={
@@ -250,6 +269,7 @@ export const RunViewMetricCharts = ({
                 onReorderChart={onReorderChart}
                 chartRefreshManager={chartRefreshManager}
                 maxResults={parseInt(maxSteps)}
+                showPoint={showPoint}
               />
             )}
           </RunsChartsTooltipWrapper>
