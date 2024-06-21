@@ -56,7 +56,8 @@ export const getSampledMetricHistoryBulkAction =
       // If refresh mode is set to `auto`, skip runs that are fresh or are being loaded
       if (refreshMode === 'auto') {
         const timePassedSinceLastUpdate = Date.now() - (sampledHistoryEntry?.lastUpdatedTime || 0);
-        const isFresh = timePassedSinceLastUpdate < EXPERIMENT_RUNS_METRIC_AUTO_REFRESH_INTERVAL;
+        // const isFresh = timePassedSinceLastUpdate < EXPERIMENT_RUNS_METRIC_AUTO_REFRESH_INTERVAL;
+        const isFresh = false;
         const isInitialized = Boolean(sampledHistoryEntry?.lastUpdatedTime);
         const isLoadingOrRefreshing = sampledHistoryEntry?.loading || sampledHistoryEntry?.refreshing;
 
