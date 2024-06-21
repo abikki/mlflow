@@ -147,32 +147,12 @@ export const RunViewMetricCharts = ({
       );
     });
   });
-  const { params } = useSelector(({ entities }: ReduxState) => ({
-    params: entities.paramsByRunUuid[runInfo.runUuid],
-  }));
-  const totalSamples = values(params).find(({ key, value }) => key === 'train_loop_config/epochs');
   const [search, setSearch] = useState('');
   const prevSample = localStorage.getItem('mlflow-run-chart-default-samples') || "320"
   const [maxSteps, setMaxSteps] = useState(parseInt(prevSample));
   const [showPoint, setShowPoint] = useState(false);
   const { formatMessage } = useIntl();
-  const sampleSize = totalSamples && totalSamples.value ? parseInt(totalSamples.value) / 10 : 250;
-  const maxSamples =
-    totalSamples && totalSamples.value
-      ? [
-          1 * sampleSize,
-          2 * sampleSize,
-          3 * sampleSize,
-          4 * sampleSize,
-          5 * sampleSize,
-          5 * sampleSize,
-          6 * sampleSize,
-          7 * sampleSize,
-          8 * sampleSize,
-          9 * sampleSize,
-          10 * sampleSize,
-        ]
-      : [320, 500, 1000, 2500];
+  const maxSamples = [320, 500, 1000, 2500]
   const { orderedMetricKeys, onReorderChart } = useOrderedCharts(metricKeys, 'RunView' + mode, runInfo.runUuid);
 
   const noMetricsRecorded = !metricKeys.length;

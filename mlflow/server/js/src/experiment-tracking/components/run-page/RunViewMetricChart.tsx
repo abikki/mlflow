@@ -131,7 +131,7 @@ export const RunViewMetricChart = ({
       });
     }
     return () => {};
-  }, [chartRefreshManager, refresh, isInViewport]);
+  }, [chartRefreshManager, refresh, isInViewport, maxResults]);
 
   const yRange = useRef<[number, number] | undefined>(undefined);
 
