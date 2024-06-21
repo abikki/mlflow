@@ -65,7 +65,7 @@ const RunViewMetricChartsSection = ({
   chartRefreshManager,
   onReorderChart,
   maxResults,
-  showPoint
+  showPoint,
 }: {
   metricKeys: string[];
   search: string;
@@ -86,7 +86,7 @@ const RunViewMetricChartsSection = ({
   const gridSetup = useMemo(
     () => ({
       ...getGridColumnSetup({
-        maxColumns: maxResults > 100 ? 1 : 3,
+        maxColumns: maxResults > 320 ? 1 : 3,
         gap: theme.spacing.lg,
         additionalBreakpoints: [{ breakpointWidth: 3 * 720, minColumnWidthForBreakpoint: 720 }],
       }),
@@ -147,13 +147,32 @@ export const RunViewMetricCharts = ({
       );
     });
   });
-
+  const { params } = useSelector(({ entities }: ReduxState) => ({
+    params: entities.paramsByRunUuid[runInfo.runUuid],
+  }));
+  const totalSamples = values(params).find(({ key, value }) => key === 'train_loop_config/epochs');
   const [search, setSearch] = useState('');
-  const [maxSteps, setMaxSteps] = useState(localStorage.getItem('mlflow-run-chart-default-steps') || '50');
-  const [showPoint, setShowPoint] = useState(true);
+  const prevSample = localStorage.getItem('mlflow-run-chart-default-samples') || "320"
+  const [maxSteps, setMaxSteps] = useState(parseInt(prevSample));
+  const [showPoint, setShowPoint] = useState(false);
   const { formatMessage } = useIntl();
-
-  const maxSamples = ['320', "500", "1000", "25000"];
+  const sampleSize = totalSamples && totalSamples.value ? parseInt(totalSamples.value) / 10 : 250;
+  const maxSamples =
+    totalSamples && totalSamples.value
+      ? [
+          1 * sampleSize,
+          2 * sampleSize,
+          3 * sampleSize,
+          4 * sampleSize,
+          5 * sampleSize,
+          5 * sampleSize,
+          6 * sampleSize,
+          7 * sampleSize,
+          8 * sampleSize,
+          9 * sampleSize,
+          10 * sampleSize,
+        ]
+      : [320, 500, 1000, 2500];
   const { orderedMetricKeys, onReorderChart } = useOrderedCharts(metricKeys, 'RunView' + mode, runInfo.runUuid);
 
   const noMetricsRecorded = !metricKeys.length;
@@ -193,7 +212,7 @@ export const RunViewMetricCharts = ({
                   defaultMessage: 'Samples',
                   description: 'Number of Samples to render',
                 })}
-                value={[maxSteps]}
+                value={[maxSteps.toString()]}
               >
                 <DialogComboboxTrigger allowClear={false} data-testid="max-samples" />
                 <DialogComboboxContent>
@@ -204,11 +223,11 @@ export const RunViewMetricCharts = ({
                           checked={maxSteps === sample}
                           key={sample}
                           data-testid={'max-samples-' + sample}
-                          value={sample}
+                          value={sample.toString()}
                           onChange={() => {
                             setMaxSteps(sample);
                             chartRefreshManager.refreshAllCharts();
-                            localStorage.setItem('mlflow-run-chart-default-samples', sample);
+                            localStorage.setItem('mlflow-run-chart-default-samples', sample.toString());
                           }}
                         >
                           {sample}
@@ -218,10 +237,10 @@ export const RunViewMetricCharts = ({
                   </DialogComboboxOptionList>
                 </DialogComboboxContent>
               </DialogCombobox>
-              <div css={{ display: 'flex', gap: theme.spacing.sm, alignItems: "center" }}>
+              <div css={{ display: 'flex', gap: theme.spacing.sm, alignItems: 'center' }}>
                 <div>
                   <FormattedMessage
-                    defaultMessage="Points"
+                    defaultMessage="Points:"
                     // eslint-disable-next-line max-len
                     description="Label for the toggle button to toggle to show points or not for the metric experiment run"
                   />
@@ -268,7 +287,7 @@ export const RunViewMetricCharts = ({
                 search={search}
                 onReorderChart={onReorderChart}
                 chartRefreshManager={chartRefreshManager}
-                maxResults={parseInt(maxSteps)}
+                maxResults={maxSteps}
                 showPoint={showPoint}
               />
             )}
