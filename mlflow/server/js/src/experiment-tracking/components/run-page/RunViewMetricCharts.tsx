@@ -206,8 +206,8 @@ export const RunViewMetricCharts = ({
                           value={sample.toString()}
                           onChange={() => {
                             setMaxSteps(sample);
-                            chartRefreshManager.refreshAllCharts();
                             localStorage.setItem('mlflow-run-chart-default-samples', sample.toString());
+                            chartRefreshManager.refreshAllCharts();
                           }}
                         >
                           {sample}
