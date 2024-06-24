@@ -17,7 +17,7 @@ import {
   Switch,
 } from '@databricks/design-system';
 import { compact, mapValues, values } from 'lodash';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { FormattedMessage, defineMessages, useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
 import { getGridColumnSetup } from '../../../common/utils/CssGrid.utils';
@@ -170,6 +170,11 @@ export const RunViewMetricCharts = ({
     );
   });
 
+  // on samples to render change, refresh all charts
+  useEffect(() => {
+    chartRefreshManager.refreshAllCharts();
+  }, [maxSteps]);
+
   return (
     <DragAndDropProvider>
       <div css={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
@@ -207,7 +212,6 @@ export const RunViewMetricCharts = ({
                           onChange={() => {
                             setMaxSteps(sample);
                             localStorage.setItem('mlflow-run-chart-default-samples', sample.toString());
-                            chartRefreshManager.refreshAllCharts();
                           }}
                         >
                           {sample}
