@@ -12,6 +12,7 @@ export interface RunViewMetricHistoryChartProps extends Pick<RunsMetricsLinePlot
   runInfo: RunInfoEntity;
   metricsHistory: MetricEntity[];
   onUpdate: RunsMetricsLinePlotProps['onUpdate'];
+  showPoint: boolean;
 }
 
 /**
@@ -24,6 +25,7 @@ export const RunViewMetricHistoryChart = ({
   onUpdate,
   xRange,
   yRange,
+  showPoint,
 }: RunViewMetricHistoryChartProps) => {
   const { theme } = useDesignSystemTheme();
 
@@ -61,6 +63,7 @@ export const RunViewMetricHistoryChart = ({
       xRange={xRange}
       yRange={yRange}
       onUpdate={onUpdate}
+      displayPoints={showPoint}
     />
   );
 };
