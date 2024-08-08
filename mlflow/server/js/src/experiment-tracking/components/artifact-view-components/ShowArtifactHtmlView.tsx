@@ -70,7 +70,7 @@ class ShowArtifactHtmlView extends Component<ShowArtifactHtmlViewProps, ShowArti
             className="html-iframe"
             display="block"
             position="relative"
-            sandbox="allow-same-origin allow-scripts"
+            sandbox={"allow-scripts", "allow-same-origin"}
           />
         </div>
       );
