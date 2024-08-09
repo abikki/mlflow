@@ -5193,7 +5193,7 @@ __metadata:
     react-dom-17: "npm:react-dom@^17.0.2"
     react-error-boundary: ^4.0.2
     react-hook-form: ^7.36.0
-    react-iframe: 1.8.0
+    react-iframe: 1.8.5
     react-intl: ^6.0.4
     react-mde: ^11.0.0
     react-pdf: ^4.1.0
@@ -27997,14 +27997,14 @@ plotly.js@2.5.1:
   languageName: node
   linkType: hard
 
-"react-iframe@npm:1.8.0":
-  version: 1.8.0
-  resolution: "react-iframe@npm:1.8.0"
+"react-iframe@npm:1.8.5":
+  version: 1.8.5
+  resolution: "react-iframe@npm:1.8.5"
   dependencies:
     object-assign: ^4.1.1
   peerDependencies:
     react: ">=16.x.x"
-  checksum: 6332fc9f1b82fe5a657aab698d5c9b97bdb276d8fc1bcd4283b570c914f3d04d4715389a5f37e6ba7831f3abc293cfcb0b2c5f8ea02e07c49444cc3b45f078c7
+  checksum: b2bb08039329035d44d6d85613337e200b7fe6d854dd45a54c34fc53ff4118874f23e17c7dbbb4825cd3d4b874ae4436edcabc819308e1aea4fdc3730ea50df0
   languageName: node
   linkType: hard
 
