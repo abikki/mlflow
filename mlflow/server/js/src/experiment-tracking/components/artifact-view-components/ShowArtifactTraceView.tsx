@@ -51,6 +51,7 @@ class ShowArtifactTraceView extends Component<ShowArtifactTraceViewProps, ShowAr
   componentDidUpdate(prevProps: ShowArtifactTraceViewProps) {
     if (this.props.path !== prevProps.path || this.props.runUuid !== prevProps.runUuid) {
       this.fetchArtifacts();
+      window.addEventListener('message', this.traceViewDataHandler, true);
     }
   }
 
