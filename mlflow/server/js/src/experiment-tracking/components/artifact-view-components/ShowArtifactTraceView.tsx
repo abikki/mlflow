@@ -28,6 +28,7 @@ class ShowArtifactTraceView extends Component<ShowArtifactTraceViewProps, ShowAr
   constructor(props: ShowArtifactTraceViewProps) {
     super(props);
     this.fetchArtifacts = this.fetchArtifacts.bind(this);
+    this.traceViewDataHandler = this.traceViewDataHandler.bind(this)
     this.iframeRef = React.createRef();
   }
 
@@ -44,14 +45,18 @@ class ShowArtifactTraceView extends Component<ShowArtifactTraceViewProps, ShowAr
 
   componentDidMount() {
     this.fetchArtifacts();
-    this.sendMessageToIframe(this.state.tracedata);
+    window.addEventListener('message', this.traceViewDataHandler, true);
   }
 
   componentDidUpdate(prevProps: ShowArtifactTraceViewProps) {
     if (this.props.path !== prevProps.path || this.props.runUuid !== prevProps.runUuid) {
       this.fetchArtifacts();
-      this.sendMessageToIframe(this.state.tracedata);
     }
+  }
+
+  componentWillUnmount() {
+    // Avoid registering `traceViewDataHandler` every time this component mounts
+    window.removeEventListener('message', this.traceViewDataHandler, true);
   }
 
   render() {
@@ -93,13 +98,15 @@ class ShowArtifactTraceView extends Component<ShowArtifactTraceViewProps, ShowAr
       });
   }
 
-  sendMessageToIframe = (message: string) => {
-    // Ensure iframeRef and contentWindow are available
-    if (this.iframeRef.current && this.iframeRef.current.contentWindow) {
-      this.iframeRef.current.contentWindow.postMessage(
-        { msg: 'data', message },
-        '*'
-      );
+  traceViewDataHandler(event: MessageEvent) {
+    const data = event.data || {}
+    if (data.msg === 'ready') {
+      if (this.iframeRef.current && this.iframeRef.current.contentWindow) {
+        this.iframeRef.current.contentWindow.postMessage(
+          { msg: 'data', data: this.state.tracedata },
+          '*'
+        );
+      }
     }
   }
 }
