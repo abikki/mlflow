@@ -103,6 +103,7 @@ class ShowArtifactTraceView extends Component<ShowArtifactTraceViewProps, ShowAr
     const data = event.data || {}
     if (data.msg === 'ready') {
       if (this.iframeRef.current && this.iframeRef.current.contentWindow) {
+        this.iframeRef.current.focus();
         this.iframeRef.current.contentWindow.postMessage(
           { msg: 'data', data: this.state.tracedata },
           '*'
