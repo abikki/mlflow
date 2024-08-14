@@ -21,7 +21,7 @@ type ShowArtifactTraceViewState = {
 type ShowArtifactTraceViewProps = {
   runUuid: string;
   path: string;
-  getArtifact: (artifactLocation: string) => Promise<string>;
+  getArtifact: (artifactLocation: string, isBinary: boolean) => Promise<ArrayBufferLike>;
 };
 
 class ShowArtifactTraceView extends Component<ShowArtifactTraceViewProps, ShowArtifactTraceViewState> {
@@ -91,21 +91,19 @@ class ShowArtifactTraceView extends Component<ShowArtifactTraceViewProps, ShowAr
   fetchArtifacts() {
     const artifactLocation = getArtifactLocationUrl(this.props.path, this.props.runUuid);
     this.props
-      .getArtifact(artifactLocation)
-      .then((tracedata: string) => {
-        const encoder = new TextEncoder();
-        const uint8Array = encoder.encode(tracedata);
-
+      .getArtifact(artifactLocation, true)
+      .then((tracebindata: ArrayBufferLike) => {
+        const uint8Array = new Uint8Array(tracebindata);
         let data = '';
         // Gzip files start with the magic number 0x1f 0x8b
         if (uint8Array[0] === 0x1f && uint8Array[1] === 0x8b) {
-            try {
-              data = pako.ungzip(uint8Array, { to: 'string' });
-            } catch (error) {
-              console.error('Decompression error:', error);
-            }
+          try {
+            data = pako.ungzip(uint8Array, { to: 'string' });
+          } catch (error) {
+            console.error('Decompression error:', error);
+          }
         } else {
-            data = new TextDecoder().decode(uint8Array);
+          data = new TextDecoder().decode(uint8Array);
         }
         this.setState({ tracedata: data, loading: false, path: this.props.path });
       })
