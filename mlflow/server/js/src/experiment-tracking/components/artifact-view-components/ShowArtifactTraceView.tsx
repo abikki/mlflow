@@ -78,7 +78,7 @@ class ShowArtifactTraceView extends Component<ShowArtifactTraceViewProps, ShowAr
             id="trace"
             className="trace-iframe"
             title="trace"
-            sandbox="allow-scripts allow-same-origin"
+            sandbox="allow-scripts"
           ></iframe>
           
         </div>
