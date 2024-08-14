@@ -11,10 +11,13 @@ export const getBasename = (path: any) => {
 };
 
 export const getExtension = (path: any) => {
-  const parts = path.split(/[./]/);
-  if (parts.length >= 3 && parts.slice(parts.length - 3).join(".") === "pt.trace.json") {
-    return "pt.trace.json"
+  const tracefileRegex = /.*\.(pt\.trace\.json(?:\.gz|\.zip)?)$/;
+  const traceMatch = path.match(tracefileRegex);
+
+  if (traceMatch) {
+    return traceMatch[1];
   } else {
+    const parts = path.split(/[./]/);
     return parts[parts.length - 1];
   }
 };
@@ -66,4 +69,4 @@ export const HTML_EXTENSIONS = new Set(['html']);
 export const MAP_EXTENSIONS = new Set(['geojson']);
 export const PDF_EXTENSIONS = new Set(['pdf']);
 export const DATA_EXTENSIONS = new Set(['csv', 'tsv']);
-export const TRACE_EXTENSIONS = new Set(['pt.trace.json']);
+export const TRACE_EXTENSIONS = new Set(['pt.trace.json', 'pt.trace.json.gz']);

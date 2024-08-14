@@ -34,7 +34,7 @@ import { FormattedMessage } from 'react-intl';
 import { ShowArtifactLoggedTableView } from './ShowArtifactLoggedTableView';
 import { Empty, Spacer, useDesignSystemTheme } from '@databricks/design-system';
 
-const MAX_PREVIEW_ARTIFACT_SIZE_MB = 250;
+const MAX_PREVIEW_ARTIFACT_SIZE_MB = 50;
 
 type ShowArtifactPageProps = {
   runUuid: string;

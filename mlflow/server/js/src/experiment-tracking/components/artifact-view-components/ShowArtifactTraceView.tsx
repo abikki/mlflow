@@ -5,6 +5,7 @@
  * annotations are already looking good, please remove this comment.
  */
 
+import pako from 'pako';
 import React, { Component } from 'react';
 import { getArtifactContent, getArtifactLocationUrl } from '../../../common/utils/ArtifactUtils';
 import './ShowArtifactTraceView.css';
@@ -92,7 +93,21 @@ class ShowArtifactTraceView extends Component<ShowArtifactTraceViewProps, ShowAr
     this.props
       .getArtifact(artifactLocation)
       .then((tracedata: string) => {
-        this.setState({ tracedata: tracedata, loading: false, path: this.props.path });
+        const encoder = new TextEncoder();
+        const uint8Array = encoder.encode(tracedata);
+
+        let data = '';
+        // Gzip files start with the magic number 0x1f 0x8b
+        if (uint8Array[0] === 0x1f && uint8Array[1] === 0x8b) {
+            try {
+              data = pako.ungzip(uint8Array, { to: 'string' });
+            } catch (error) {
+              console.error('Decompression error:', error);
+            }
+        } else {
+            data = new TextDecoder().decode(uint8Array);
+        }
+        this.setState({ tracedata: data, loading: false, path: this.props.path });
       })
       .catch((error: Error) => {
         this.setState({ error: error, loading: false, path: this.props.path });
